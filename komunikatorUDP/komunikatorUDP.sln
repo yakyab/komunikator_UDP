@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "komunikatorUDP", "komunikatorUDP.csproj", "{B0BA01CC-C552-4374-9450-C9E2432257BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0BA01CC-C552-4374-9450-C9E2432257BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BA01CC-C552-4374-9450-C9E2432257BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BA01CC-C552-4374-9450-C9E2432257BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BA01CC-C552-4374-9450-C9E2432257BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A265DDF4-CDB7-4A21-A668-A0E7C3EE261E}
+	EndGlobalSection
+EndGlobal
