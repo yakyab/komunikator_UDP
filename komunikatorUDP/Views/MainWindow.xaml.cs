@@ -39,8 +39,20 @@ namespace komunikatorUDP.Views
 
         private void InitializeUDPConnection(object sender, RoutedEventArgs e)
         {
-            _viewModel.ListeningPort = int.Parse(ListeningPortInput.Text);
-            _viewModel.TargetPort = int.Parse(TargetPortInput.Text);
+            if (string.IsNullOrEmpty(ListeningPortInput.Text) || string.IsNullOrEmpty(TargetPortInput.Text))
+            {
+                MessageBox.Show("Proszę wypełnić oba pola portów.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(ListeningPortInput.Text, out int listeningPort) || !int.TryParse(TargetPortInput.Text, out int targetPort))
+            {
+                MessageBox.Show("Proszę wprowadzić prawidłowe numery portów.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            _viewModel.ListeningPort = listeningPort;
+            _viewModel.TargetPort = targetPort;
             _viewModel.InitializeUDPConnection(); // Inicjacja połączenia z nowymi portami
         }
 

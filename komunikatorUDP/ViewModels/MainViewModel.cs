@@ -15,6 +15,7 @@ namespace komunikatorUDP.ViewModels
     {
         private ObservableCollection<Message> _messages;
         private UdpClient _udpClient;
+        private bool _continueListening = true;
         public int ListeningPort { get; set; }
         public int TargetPort { get; set; }
 
@@ -37,12 +38,21 @@ namespace komunikatorUDP.ViewModels
         {
             if (_udpClient != null)
             {
+                _continueListening = false;
                 _udpClient.Close();
-                _udpClient = null; 
+                _udpClient = null;
             }
 
-            _udpClient = new UdpClient(ListeningPort);
-            StartListening();
+            try
+            {
+                _udpClient = new UdpClient(ListeningPort);
+                _continueListening = true; // Wznów nasłuchiwanie
+                StartListening();
+            }
+            catch (SocketException)
+            {
+                MessageBox.Show("Nie można nasłuchiwać na wskazanym porcie, ponieważ jest on już w użyciu.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void SendMessage(string messageContent)
@@ -68,18 +78,30 @@ namespace komunikatorUDP.ViewModels
 
         public async void StartListening()
         {
-            while (true)
+            while (_continueListening)
             {
-
-                var result = await _udpClient.ReceiveAsync();
-                string receivedMessage = Encoding.UTF8.GetString(result.Buffer);
-
-                Messages.Add(new Message
+                try
                 {
-                    Content = receivedMessage,
-                    Timestamp = DateTime.Now,
-                    IsMyMessage = "Nadawca:" 
-                });
+                    var result = await _udpClient.ReceiveAsync();
+                    string receivedMessage = Encoding.UTF8.GetString(result.Buffer);
+
+                    Messages.Add(new Message
+                    {
+                        Content = receivedMessage,
+                        Timestamp = DateTime.Now,
+                        IsMyMessage = "Nadawca:"
+                    });
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Gdy _udpClient zostanie zamknięty
+                    break;
+                }
+                catch (SocketException)
+                {
+                    // Gdy próbujemy odbierać dane na zamkniętym gnieździe lub wystąpi inny błąd gniazda
+                    break;
+                }
             }
         }
 
