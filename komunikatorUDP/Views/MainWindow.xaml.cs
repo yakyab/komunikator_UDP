@@ -34,13 +34,13 @@ namespace komunikatorUDP.Views
         }
 
         /// <summary>
-        /// Inicjalizuje połączenie UDP na podstawie wprowadzonych portów.
+        /// Inicjalizuje połączenie UDP na podstawie wprowadzonych portów i adresu IP.
         /// </summary>
         private void InitializeUDPConnection(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(ListeningPortInput.Text) || string.IsNullOrEmpty(TargetPortInput.Text))
+            if (string.IsNullOrEmpty(ListeningPortInput.Text) || string.IsNullOrEmpty(TargetPortInput.Text) || string.IsNullOrEmpty(IPInput.Text))
             {
-                MessageBox.Show("Proszę wypełnić oba pola portów.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Proszę wypełnić pola portów i adresu IP.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -50,9 +50,11 @@ namespace komunikatorUDP.Views
                 return;
             }
 
+            _viewModel.TargetIP = IPInput.Text;
             _viewModel.ListeningPort = listeningPort;
             _viewModel.TargetPort = targetPort;
-            _viewModel.InitializeUDPConnection();
+
+            _viewModel.InitializeUDPConnection(); // Inicjacja połączenia z nowymi portami
         }
     }
 }

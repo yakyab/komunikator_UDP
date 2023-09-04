@@ -18,6 +18,11 @@ namespace komunikatorUDP.ViewModels
         private bool _continueListening = true;
 
         /// <summary>
+        /// Adres IP odbiorcy.
+        /// </summary>
+        public string TargetIP { get; set; }
+
+        /// <summary>
         /// Port, na którym aplikacja będzie nasłuchiwać wiadomości.
         /// </summary>
         public int ListeningPort { get; set; }
@@ -89,7 +94,15 @@ namespace komunikatorUDP.ViewModels
             }
 
             byte[] data = Encoding.UTF8.GetBytes(messageContent);
-            _udpClient.Send(data, data.Length, "127.0.0.1", TargetPort);
+            try
+            {
+                _udpClient.Send(data, data.Length, TargetIP, TargetPort);
+            }
+            catch (SocketException ex)
+            {
+                ErrorOccurred?.Invoke(this, $"Błąd przy wysyłaniu wiadomości: {ex.Message}");
+                return;
+            }
 
             Messages.Add(new Message
             {
