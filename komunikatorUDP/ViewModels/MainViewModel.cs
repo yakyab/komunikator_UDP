@@ -1,24 +1,40 @@
 ﻿using komunikatorUDP.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.ComponentModel;
-using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace komunikatorUDP.ViewModels
 {
+    /// <summary>
+    /// ViewModel dla głównego okna komunikatora.
+    /// Zarządza logiką komunikacji UDP i operacjami na wiadomościach.
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<Message> _messages;
         private UdpClient _udpClient;
         private bool _continueListening = true;
+
+        /// <summary>
+        /// Port, na którym aplikacja będzie nasłuchiwać wiadomości.
+        /// </summary>
         public int ListeningPort { get; set; }
+
+        /// <summary>
+        /// Port, na który będą wysyłane wiadomości.
+        /// </summary>
         public int TargetPort { get; set; }
 
+        /// <summary>
+        /// Zdarzenie informujące o błędzie.
+        /// </summary>
+        public event EventHandler<string> ErrorOccurred;
+
+        /// <summary>
+        /// Kolekcja wiadomości wyświetlanych w interfejsie użytkownika.
+        /// </summary>
         public ObservableCollection<Message> Messages
         {
             get { return _messages; }
@@ -34,6 +50,9 @@ namespace komunikatorUDP.ViewModels
             Messages = new ObservableCollection<Message>();
         }
 
+        /// <summary>
+        /// Inicjuje połączenie UDP na podanym porcie nasłuchiwania.
+        /// </summary>
         public void InitializeUDPConnection()
         {
             if (_udpClient != null)
@@ -46,22 +65,26 @@ namespace komunikatorUDP.ViewModels
             try
             {
                 _udpClient = new UdpClient(ListeningPort);
-                _continueListening = true; // Wznów nasłuchiwanie
+                _continueListening = true;
                 StartListening();
             }
             catch (SocketException)
             {
-                MessageBox.Show("Nie można nasłuchiwać na wskazanym porcie, ponieważ jest on już w użyciu.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorOccurred?.Invoke(this, "Nie można nasłuchiwać na wskazanym porcie, ponieważ jest on już w użyciu.");
             }
         }
 
+        /// <summary>
+        /// Wysyła wiadomość na podany port docelowy.
+        /// </summary>
+        /// <param name="messageContent">Treść wiadomości do wysłania.</param>
         public void SendMessage(string messageContent)
         {
             if (string.IsNullOrEmpty(messageContent)) return;
 
             if (_udpClient == null)
             {
-                MessageBox.Show("Najpierw zatwierdź porty i nawiąż połączenie.", "Brak połączenia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ErrorOccurred?.Invoke(this, "Najpierw zatwierdź porty i nawiąż połączenie.");
                 return;
             }
 
@@ -76,6 +99,9 @@ namespace komunikatorUDP.ViewModels
             });
         }
 
+        /// <summary>
+        /// Nasłuchiwanie na wiadomości przychodzące na wskazanym porcie.
+        /// </summary>
         public async void StartListening()
         {
             while (_continueListening)
@@ -94,12 +120,10 @@ namespace komunikatorUDP.ViewModels
                 }
                 catch (ObjectDisposedException)
                 {
-                    // Gdy _udpClient zostanie zamknięty
                     break;
                 }
                 catch (SocketException)
                 {
-                    // Gdy próbujemy odbierać dane na zamkniętym gnieździe lub wystąpi inny błąd gniazda
                     break;
                 }
             }
@@ -114,7 +138,6 @@ namespace komunikatorUDP.ViewModels
         }
     }
 }
-
 
 
 

@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 using komunikatorUDP.ViewModels;
 
 namespace komunikatorUDP.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Główne okno aplikacji komunikatora.
+    /// Obsługuje interakcje użytkownika z interfejsem oraz komunikację z ViewModel.
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -28,15 +16,26 @@ namespace komunikatorUDP.Views
             InitializeComponent();
             _viewModel = new MainViewModel();
             this.DataContext = _viewModel;
+
+            // Rejestruje zdarzenie dla błędów zgłaszanych przez ViewModel
+            _viewModel.ErrorOccurred += (sender, errorMessage) =>
+            {
+                MessageBox.Show(errorMessage, "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+            };
         }
 
+        /// <summary>
+        /// Obsługuje kliknięcie przycisku "Wyślij". Wysyła wiadomość przez ViewModel.
+        /// </summary>
         private void SendButtonClick(object sender, RoutedEventArgs e)
         {
-            var viewModel = (MainViewModel)DataContext;
-            viewModel.SendMessage(MessageInput.Text);
-            MessageInput.Text = string.Empty; // Czyszczenie pola po wysłaniu
+            _viewModel.SendMessage(MessageInput.Text);
+            MessageInput.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Inicjalizuje połączenie UDP na podstawie wprowadzonych portów.
+        /// </summary>
         private void InitializeUDPConnection(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(ListeningPortInput.Text) || string.IsNullOrEmpty(TargetPortInput.Text))
@@ -53,9 +52,7 @@ namespace komunikatorUDP.Views
 
             _viewModel.ListeningPort = listeningPort;
             _viewModel.TargetPort = targetPort;
-            _viewModel.InitializeUDPConnection(); // Inicjacja połączenia z nowymi portami
+            _viewModel.InitializeUDPConnection();
         }
-
-
     }
 }
