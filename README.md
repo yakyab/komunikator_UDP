@@ -15,6 +15,7 @@ Prosty komunikator, który umożliwia wymianę wiadomości przy użyciu protoko�
 - **Framework:** .NET Framework
 - **Interfejs:** WPF (Windows Presentation Foundation)
 - **Komunikacja sieciowa:** UDP (przy użyciu klasy `UdpClient`)
+- **Architektura:** MVVM (Model-View-ViewModel)
 
 ## Instalacja
 
